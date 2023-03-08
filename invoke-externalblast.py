@@ -4,6 +4,7 @@ import sys
 from colorama import Fore, Back, Style 
 import subprocess 
 import os 
+import argparse
 
 
 # Define Banner
@@ -16,7 +17,7 @@ def printBanner():
 ╲╲_______╱╲__╱_____╱  ╲______╱╲________╱╲____╱___╱╲________╱    ╲________╱╲___╱____╱ ╲______╱ ╲________╱╲________╱╲___╱____╱╲________╱ ╲______╱  \n\n\n """)
 print(Style.RESET_ALL)
 
-def dnsenum():
+def dnsenum(domain):
 	print(Fore.GREEN + "Hold on tight! Enumerating DNS!\n")
 	print(Style.RESET_ALL)
 	print(Fore.YELLOW)
@@ -25,7 +26,7 @@ def dnsenum():
 	os.system("cat dns-locks.txt")
 	print(Style.RESET_ALL)
 	
-def ikescan():
+def ikescan(scope):
 	print(Fore.GREEN + "\nEnumerating using Ikescan\n")
 	print(Style.RESET_ALL)
 	
@@ -42,7 +43,7 @@ def ikescan():
     		os.system('ike-scan -A ' + l + ' > ike-scan-results.txt')
     		print(Style.RESET_ALL)
     		
-def metalookup():
+def metalookup(domain):
 	print(Fore.GREEN + "\nInstalling pymeta\n")
 	print(Style.RESET_ALL)
 	
@@ -52,13 +53,26 @@ def metalookup():
 	print(Fore.YELLOW)
 	os.system("pymeta -d " + domain)
 	
+def parse_args():
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument("-d", "--domain", type=str,
+		help="The domain you want to enumerate")
+	parser.add_argument("-s", "--scope", type=str,
+			help="The scope.txt file.")
+	return parser.parse_args()
+
 
 
 #Arguments
-domain = sys.argv[1]
-scope = sys.argv[2]
+def main():
+	args = parse_args()
+	domain = args.domain
+	scope = args.scope
+	printBanner()
+	dnsenum(domain)
+	ikescan(scope)
+	metalookup(domain)
 	
-printBanner()
-dnsenum()
-ikescan()
-metalookup()
+if __name__ == '__main__':
+	main()
