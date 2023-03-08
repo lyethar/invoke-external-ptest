@@ -19,12 +19,14 @@ print(Style.RESET_ALL)
 def dnsenum():
 	print(Fore.GREEN + "Hold on tight! Enumerating DNS!\n")
 	print(Style.RESET_ALL)
+	print(Fore.YELLOW)
 	os.system("whois " + domain + " > domain-whois.txt")
 	os.system("""cat domain-whois.txt | grep -e 'Domain Status:' -e 'Domain Name' > dns-locks.txt""")
 	os.system("cat dns-locks.txt")
-
+	print(Style.RESET_ALL)
+	
 def ikescan():
-	print(Fore.GREEN + "Enumerating using Ikescan\n")
+	print(Fore.GREEN + "\nEnumerating using Ikescan\n")
 	print(Style.RESET_ALL)
 	
 	# Appending Lines to lines array
@@ -35,7 +37,21 @@ def ikescan():
     
 	for l in lines:
     		print(Fore.GREEN + "\nEnumerating " + l)
-    		os.system('ikescan -A ' + l + ' | tee ike-scan-results.txt')
+    		print(Style.RESET_ALL)
+    		print(Fore.YELLOW)
+    		os.system('ike-scan -A ' + l + ' > ike-scan-results.txt')
+    		print(Style.RESET_ALL)
+    		
+def metalookup():
+	print(Fore.GREEN + "\nInstalling pymeta\n")
+	print(Style.RESET_ALL)
+	
+	print(Fore.YELLOW)
+	os.system("pip3 install pymetasec")
+	print(Fore.GREEN + "\nUsing pymeta!\n")
+	print(Fore.YELLOW)
+	os.system("pymeta -d " + domain)
+	
 
 
 #Arguments
@@ -45,3 +61,4 @@ scope = sys.argv[2]
 printBanner()
 dnsenum()
 ikescan()
+metalookup()
