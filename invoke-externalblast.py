@@ -16,4 +16,7 @@ def printBanner():
 ╲╲_______╱╲__╱_____╱  ╲______╱╲________╱╲____╱___╱╲________╱    ╲________╱╲___╱____╱ ╲______╱ ╲________╱╲________╱╲___╱____╱╲________╱ ╲______╱   """)
 print(Style.RESET_ALL)
 
-def
+def dnsenum()
+	print(Fore.GREEN + "Hold on tight! Enumerating DNS!\n")
+	print(Style.RESET_ALL)
+	
