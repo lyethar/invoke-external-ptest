@@ -52,14 +52,23 @@ def metalookup(domain):
 	print(Fore.GREEN + "\nUsing pymeta!\n")
 	print(Fore.YELLOW)
 	os.system("pymeta -d " + domain)
-	
+
+
+def invokescan(scope):
+	print(Fore.GREEN + "\nUsing nmap to scan scope!")	
+	print(Fore.YELLOW)
+	os.system('nmap -sS -Pn -T3 -iL ' + scope + ' -oA outpuFile')
+
 def parse_args():
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("-d", "--domain", type=str,
 		help="The domain you want to enumerate")
 	parser.add_argument("-s", "--scope", type=str,
-			help="The scope.txt file.")
+			help="The scope.txt file.")	
+	parser.add_argument("-x", "--nmap", type=str,
+			help="Defines wether to launch an nmap scan or not.")
+			
 	return parser.parse_args()
 
 
@@ -69,10 +78,19 @@ def main():
 	args = parse_args()
 	domain = args.domain
 	scope = args.scope
-	printBanner()
-	dnsenum(domain)
-	ikescan(scope)
-	metalookup(domain)
+	nmap = args.nmap
+	if not nmap:
+		printBanner()
+		dnsenum(domain)
+		ikescan(scope)
+		metalookup(domain)
+	else:
+		printBanner()
+		dnsenum(domain)
+		ikescan(scope)
+		metalookup(domain)
+		invokescan(scope)
+		
 	
 if __name__ == '__main__':
 	main()
