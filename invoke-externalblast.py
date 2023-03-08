@@ -46,7 +46,6 @@ def ikescan(scope):
 def metalookup(domain):
 	print(Fore.GREEN + "\nInstalling pymeta\n")
 	print(Style.RESET_ALL)
-	
 	print(Fore.YELLOW)
 	os.system("pip3 install pymetasec")
 	print(Fore.GREEN + "\nUsing pymeta!\n")
@@ -56,8 +55,36 @@ def metalookup(domain):
 
 def invokescan(scope):
 	print(Fore.GREEN + "\nUsing nmap to scan scope!")	
+	print(Style.RESET_ALL)
 	print(Fore.YELLOW)
 	os.system('nmap -sS -Pn -T3 -iL ' + scope + ' -oA outpuFile')
+
+
+def invoketrevorsprayrecon(domain):
+	print(Fore.GREEN + "\nUsing trevorspray to enumerate endpoint!")
+	os.system('trevorspray --recon ' + domain + ' > trevorspray-recon.txt')
+	os.system("""cat trevorspray-recon.txt | grep 'token_endpoint' > token_endpoint""")
+	os.system("""sed -i '1d' token_endpoint""")
+	os.system("""sed -i '$d' token_endpoint""")
+	os.system("""cat token_endpoint | tr -d "[:space:]" > token_endpoint2""")
+	os.system("""cat token_endpoint2 | cut -d ":" -f3 > token_endpoint3""")
+	os.system("""sed -i 's/,//g' token_endpoint3""")
+	os.system("""sed -i 's/"//g' token_endpoint3""")
+	os.system("""sed -i -e 's/^/https:/' token_endpoint3""")
+	print('Using the following endpoint to gather users!')
+	print(Fore.YELLOW)
+	os.system('cat token_endpoint3')
+	userlists = ["https://raw.githubusercontent.com/insidetrust/statistically-likely-usernames/master/john.smith.txt","https://raw.githubusercontent.com/insidetrust/statistically-likely-usernames/master/jjsmith.txt","https://raw.githubusercontent.com/insidetrust/statistically-likely-usernames/master/johnsmith.txt","https://raw.githubusercontent.com/insidetrust/statistically-likely-usernames/master/jsmith.txt"]
+	for x in userlists:
+    		os.system('wget ' + x + ' 2>/dev/null')
+	os.system('for file in $(ls | grep smith); do echo $file >> file_list.txt; done')
+	with open("file_list.txt") as file_in:
+    		lines = []
+    		for line in file_in:
+        		lines.append(line)   
+	for l in lines:
+    		print("\nEnumerating: " + domain + " using " + l)
+    		os.system('trevorspray --recon ' + domain + ' -u' + l + ' --threads 10' )
 
 def parse_args():
 	parser = argparse.ArgumentParser()
@@ -82,13 +109,15 @@ def main():
 	if not nmap:
 		printBanner()
 		dnsenum(domain)
-		ikescan(scope)
+		invoketrevorsprayrecon(domain)
 		metalookup(domain)
+		ikescan(scope)
 	else:
 		printBanner()
 		dnsenum(domain)
-		ikescan(scope)
+		invoketrevorsprayrecon(domain)
 		metalookup(domain)
+		ikescan(scope)
 		invokescan(scope)
 		
 	
