@@ -84,7 +84,7 @@ def invoketrevorsprayrecon(domain):
         		lines.append(line)   
 	for l in lines:
     		print("\nEnumerating: " + domain + " using " + l)
-    		os.system('trevorspray --recon ' + domain + ' -u' + l + ' --threads 10' )
+    		os.system('trevorspray --recon ' + domain + ' -u ' + l + ' --threads 10' )
 
 def parse_args():
 	parser = argparse.ArgumentParser()
